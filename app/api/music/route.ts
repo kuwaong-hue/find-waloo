@@ -15,9 +15,9 @@ const stylePrompts: Record<MusicStyle, string> = {
 
 const activityPrompts: Record<WolluActivity, string> = {
   quoteRaw:
-    "Use the highlighted quote and nearby context as directly as possible while keeping it safe and playful.",
+    "Prioritize exact Korean quotes from offContextQuotes and trollHighlights. Keep the quoted sentence recognizable and emphasize it in the hook.",
   summaryHighlight:
-    "Use the meeting summary and only the strongest highlight moments for a clean, catchy song.",
+    "Use the meeting summary plus only the funniest or strongest highlight moment. Keep it concise and catchy.",
   logicalRoast:
     "Make the lyrics feel like a witty evidence-based roast of the office slacker candidate, without harassment.",
   dinnerRecommend:

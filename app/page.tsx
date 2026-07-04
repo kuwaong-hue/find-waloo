@@ -1,18 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  ArrowLeft,
-  BriefcaseBusiness,
-  Crown,
-  FileText,
-  Mic,
-  Music2,
-  ShieldAlert,
-  Sparkles,
-  TriangleAlert,
-} from "lucide-react";
+import { ArrowLeft, Mic, Music2, Sparkles, TriangleAlert } from "lucide-react";
 import { HeroIntro } from "@/components/HeroIntro";
 import { LoadingVideoCard } from "@/components/LoadingVideoCard";
 import { MeetingContextPanel } from "@/components/MeetingContextPanel";
@@ -32,7 +23,7 @@ type Phase = "idle" | "loading" | "done";
 type ScreenMode = "minutes" | "wollu";
 
 const MAX_AUDIO_DURATION_SECONDS = 10 * 60;
-const MAX_AUDIO_FILE_BYTES = 4 * 1024 * 1024;
+const MAX_AUDIO_FILE_BYTES = 30 * 1024 * 1024;
 
 export default function Home() {
   const [phase, setPhase] = useState<Phase>("idle");
@@ -66,7 +57,7 @@ export default function Home() {
     }
 
     if (file.size > MAX_AUDIO_FILE_BYTES) {
-      setErrorMessage("배포 환경에서는 4MB 이하의 짧은 오디오 파일만 업로드할 수 있습니다.");
+      setErrorMessage("30MB 이하의 오디오 파일만 업로드할 수 있습니다.");
       return;
     }
 
@@ -253,18 +244,18 @@ export default function Home() {
                         <div>
                           <p className="text-sm font-black text-blue-600">READY</p>
                           <h2 className="mt-4 text-5xl font-black leading-tight text-slate-950">
-                            자료를 넣고
+                            회의 내용을 넣고
                             <br />
-                            회의록부터 확인하세요
+                            요약 결과를 확인하세요
                           </h2>
                           <p className="mt-5 max-w-2xl text-xl font-bold leading-relaxed text-slate-600">
-                            음성 파일이 없으면 회의 내용을 텍스트로 넣어도 됩니다. 기본 화면은 업무용
-                            회의록에 집중하고, 월루송 생성은 결과 화면에서 별도로 전환합니다.
+                            음성 파일이 없으면 회의 내용을 텍스트로 넣어도 됩니다. 기본 화면은 회의
+                            메모 요약에 집중하고, 월루송 생성은 중요사항 확인 이후 진행합니다.
                           </p>
                         </div>
 
                         <div className="grid grid-cols-3 gap-4">
-                          {["음성 또는 텍스트 입력", "회의록 요약", "월루송 모드 전환"].map(
+                          {["음성 또는 텍스트 입력", "회의 메모 요약", "중요사항 확인"].map(
                             (item, index) => (
                               <div key={item} className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
                                 <p className="text-4xl font-black text-blue-600">0{index + 1}</p>
@@ -301,7 +292,7 @@ export default function Home() {
                           <div>
                             <p className="text-sm font-black text-blue-600">회의록 생성 완료</p>
                             <p className="mt-1 font-bold text-slate-700">
-                              회의록을 확인한 뒤 월루송 생성기로 이동할 수 있습니다.
+                              회의 요약을 확인한 뒤 중요사항 보드로 이동할 수 있습니다.
                             </p>
                           </div>
                           <div className="flex gap-3">
@@ -313,12 +304,12 @@ export default function Home() {
                               다시 분석
                             </button>
                             <button
-                              className="inline-flex h-12 items-center gap-2 rounded-xl bg-blue-600 px-5 font-black text-white shadow-md shadow-blue-200 transition hover:-translate-y-0.5"
+                              className="inline-flex h-12 items-center gap-2 rounded-xl bg-red-600 px-5 font-black text-white shadow-md shadow-red-200 transition hover:-translate-y-0.5 hover:bg-red-700"
                               type="button"
                               onClick={() => setScreenMode("wollu")}
                             >
                               <Music2 className="h-5 w-5" />
-                              월루송 생성기로 전환
+                              회의 중요사항 확인하기!
                             </button>
                           </div>
                         </div>
@@ -339,60 +330,54 @@ export default function Home() {
                 initial={{ opacity: 0, rotateY: -8, y: 16 }}
                 transition={{ duration: 0.38 }}
               >
-                <section className="relative mb-6 overflow-hidden rounded-[10px] border-[3px] border-white bg-ink p-8 shadow-white">
-                  <div className="absolute -left-16 -top-20 h-56 w-72 rotate-[-18deg] bg-caution" />
-                  <div className="absolute inset-0 bg-grit-noise opacity-80" />
-                  <div className="relative z-10 grid grid-cols-[1fr_0.48fr] items-center gap-8">
-                    <div>
-                      <div className="sticker px-5 py-2 text-lg">WALOO BOARD</div>
-                      <h1 className="graffiti-title mt-5 text-7xl leading-none">
-                        월루를
-                        <br />
-                        찾아라
-                      </h1>
-                      <p className="mt-4 text-2xl font-black white-pop">
-                        회의록 뒤에 숨은 하이라이트와 월루송 재료를 정리했습니다
-                      </p>
-                    </div>
-
-                    <div className="paper-card torn-edge flex min-h-44 items-center justify-center p-6">
-                      <div className="text-center">
-                        <Crown className="mx-auto mb-3 h-12 w-12" />
-                        <ShieldAlert className="mx-auto mb-2 h-16 w-16" />
-                        <p className="text-xl font-black">오늘의 월루 후보 정리 완료</p>
-                      </div>
-                    </div>
-                  </div>
+                <section className="mb-6 overflow-hidden rounded-[10px] border-[3px] border-white bg-black shadow-white">
+                  <Image
+                    alt="월루를 찾아라 메인 보드"
+                    className="h-auto w-full"
+                    height={1024}
+                    priority
+                    src="/media/main-page2.png"
+                    width={1024}
+                  />
                 </section>
 
-                <section className="paper-card mb-6 grid grid-cols-[1fr_0.34fr] gap-5 p-5">
-                  <div>
+                <section className="mb-6 grid grid-cols-[1fr_0.34fr] gap-5 rounded-[10px] border-[3px] border-white bg-black p-5 shadow-white">
+                  <div className="rounded-md border-2 border-white/60 bg-neutral-950 p-6 text-white">
                     <div className="mb-4 flex items-center gap-3">
-                      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-black text-white">
+                      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-caution text-black">
                         <Mic className="h-8 w-8" />
                       </div>
                       <div>
-                        <h2 className="text-3xl font-black">회의 분석 결과</h2>
-                        <p className="font-bold text-neutral-500">
+                        <h2 className="text-3xl font-black text-caution">회의 분석 결과</h2>
+                        <p className="font-bold text-white/65">
                           {result.meetingTitle} · {result.duration}
                         </p>
                       </div>
                     </div>
-                    <div className="rounded-md border-2 border-dashed border-neutral-400 bg-white p-8 text-center text-2xl font-black leading-relaxed">
+                    <div className="rounded-md border-2 border-dashed border-caution/70 bg-black p-8 text-center text-2xl font-black leading-relaxed text-caution">
                       회의록 분석 완료 · 숨겨진 후보와 음악 재료를 추출했습니다
                     </div>
                   </div>
 
                   <button
-                    className="flex min-h-44 flex-col items-center justify-center rounded-lg border-[5px] border-black bg-neutral-900 p-5 text-center text-white shadow-sticker transition hover:-translate-y-1"
+                    className="group flex min-h-44 items-center justify-center overflow-hidden rounded-lg border-[4px] border-white bg-black p-3 shadow-sticker transition hover:-translate-y-1"
                     type="button"
                     onClick={() => setScreenMode("minutes")}
                   >
-                    <span className="mb-3 flex h-20 w-20 items-center justify-center rounded-full border-4 border-black bg-caution text-black shadow-sticker">
-                      <ArrowLeft className="h-10 w-10" />
-                    </span>
-                    <span className="text-3xl font-black white-pop">회의록 모드로</span>
-                    <span className="text-4xl font-black text-caution">전환하기</span>
+                    <Image
+                      alt="회의록 모드로 전환하기"
+                      className="block h-auto w-full group-active:hidden"
+                      height={1024}
+                      src="/media/button-1.png"
+                      width={1024}
+                    />
+                    <Image
+                      alt="회의록 모드로 전환하기 누름 상태"
+                      className="hidden h-auto w-full group-active:block"
+                      height={1024}
+                      src="/media/button-2.png"
+                      width={1024}
+                    />
                   </button>
                 </section>
 
@@ -430,36 +415,7 @@ function MinutesHeader() {
         <div className="text-5xl font-black text-blue-600">W</div>
         <p className="text-3xl font-black text-slate-950">Find Waloo</p>
       </div>
-      <nav className="flex gap-4">
-        <HeaderButton icon={Sparkles} label="AI 요약" active />
-        <HeaderButton icon={FileText} label="회의 기록" />
-        <HeaderButton icon={BriefcaseBusiness} label="실무 지원" />
-      </nav>
     </header>
-  );
-}
-
-function HeaderButton({
-  icon: Icon,
-  label,
-  active = false,
-}: {
-  icon: typeof Sparkles;
-  label: string;
-  active?: boolean;
-}) {
-  return (
-    <button
-      className={`inline-flex h-14 items-center gap-2 rounded-2xl border px-6 text-lg font-black ${
-        active
-          ? "border-blue-200 bg-white text-blue-600 shadow-sm"
-          : "border-slate-200 bg-white text-slate-600"
-      }`}
-      type="button"
-    >
-      <Icon className="h-5 w-5" />
-      {label}
-    </button>
   );
 }
 
@@ -506,7 +462,7 @@ async function readApiResponse<T>(response: Response): Promise<T & { error?: str
 
   if (rawText.includes("Request Entity Too Large")) {
     return {
-      error: "업로드 파일이 서버 제한보다 큽니다. 4MB 이하의 짧은 mp3/wav 파일로 다시 시도해 주세요.",
+      error: "업로드 파일이 서버 제한보다 큽니다. 30MB 이하의 짧은 mp3/wav 파일로 다시 시도해 주세요.",
     } as T & { error?: string };
   }
 

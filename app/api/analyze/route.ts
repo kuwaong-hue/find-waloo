@@ -6,7 +6,7 @@ export const maxDuration = 60;
 
 const OPENAI_TRANSCRIPTIONS_URL = "https://api.openai.com/v1/audio/transcriptions";
 const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
-const MAX_AUDIO_FILE_BYTES = 4 * 1024 * 1024;
+const MAX_AUDIO_FILE_BYTES = 30 * 1024 * 1024;
 
 const styleLabels: Record<MusicStyle, string> = {
   hiphop: "경쾌한 코미디 힙합",
@@ -124,7 +124,7 @@ export async function POST(request: Request) {
     }
 
     if (audioFile && audioFile.size > MAX_AUDIO_FILE_BYTES) {
-      return jsonError("배포 환경에서는 4MB 이하의 오디오 파일만 업로드할 수 있습니다.", 400);
+      return jsonError("30MB 이하의 오디오 파일만 업로드할 수 있습니다.", 400);
     }
 
     const transcript = audioFile ? await transcribeAudio(audioFile, openAiKey) : meetingNotes;
@@ -219,7 +219,10 @@ async function analyzeTranscript(
             "아래 회의 내용을 바탕으로 정상 회의록과 숨겨진 월루 분석 데이터를 동시에 생성해줘.",
             "참석자 이름이 불명확하면 '참석자 A'처럼 안전하게 추정해줘.",
             "trollCandidates score는 0~100 사이 숫자로 작성해줘.",
-            "lyrics.lines는 5~8줄의 짧은 한국어 노래 가사로 작성해줘.",
+            "trollHighlights에는 회의 내용에서 가장 웃긴 장면 또는 가장 인상적인 장면을 넣어줘.",
+            "offContextQuotes에는 가능하면 회의 원문에 실제로 등장한 문장을 그대로 넣어줘. 정확한 원문이 없으면 절대 지어내지 말고, 원문 기반으로 짧게 요약해줘.",
+            "derailmentLines에는 회의 흐름을 끊거나 맥락을 흔든 발언/상황을 원문에 가깝게 넣어줘.",
+            "lyrics.lines는 5~8줄의 짧은 한국어 노래 가사로 작성하되, 실제 대사 발췌가 가능하면 한 줄 이상에 그대로 반영해줘.",
             "",
             "회의 내용:",
             transcript,

@@ -16,7 +16,7 @@ export function UploadPanel({ fileName, audioDurationLabel, onFileChange }: Uplo
           <p className="text-sm font-black text-blue-600">STEP 1</p>
           <h2 className="mt-1 text-3xl font-black">회의 음성 업로드</h2>
           <p className="mt-2 text-sm font-bold text-slate-500">
-            선택 사항입니다. 배포 환경에서는 10분 이하, 4MB 이하 파일을 권장합니다.
+            선택 사항입니다. 10분 이하, 30MB 이하 오디오 파일을 업로드할 수 있습니다.
           </p>
         </div>
         <UploadCloud className="h-11 w-11 text-blue-600" />
@@ -38,7 +38,7 @@ export function UploadPanel({ fileName, audioDurationLabel, onFileChange }: Uplo
           {fileName || "파일을 드래그하거나 클릭해서 업로드"}
         </p>
         <p className="mt-2 text-sm font-bold text-slate-500">
-          mp3 / wav / m4a / webm, 최대 4MB
+          mp3 / wav / m4a / webm, 최대 30MB
         </p>
         {audioDurationLabel ? (
           <p className="mt-3 rounded-full bg-blue-100 px-4 py-2 text-sm font-black text-blue-700">

@@ -32,22 +32,19 @@ export function TrollMusicStudio({
 }: TrollMusicStudioProps) {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(30);
-  const [lyricStartOffset, setLyricStartOffset] = useState(8);
-  const [lyricCoverage, setLyricCoverage] = useState(86);
 
   const lyricTimings = useMemo(() => {
     const lines = result.lyrics.lines.length > 0 ? result.lyrics.lines : ["가사를 생성하는 중입니다"];
     const safeDuration = Number.isFinite(duration) && duration > 0 ? duration : 30;
-    const start = Math.min(lyricStartOffset, Math.max(0, safeDuration - 1));
-    const usableDuration = Math.max(1, (safeDuration - start) * (lyricCoverage / 100));
-    const segment = usableDuration / lines.length;
+    const introSeconds = Math.min(6, Math.max(0, safeDuration * 0.18));
+    const segment = Math.max(1, (safeDuration - introSeconds) / lines.length);
 
     return lines.map((line, index) => ({
       line,
-      start: start + segment * index,
-      end: start + segment * (index + 1),
+      start: introSeconds + segment * index,
+      end: introSeconds + segment * (index + 1),
     }));
-  }, [duration, lyricCoverage, lyricStartOffset, result.lyrics.lines]);
+  }, [duration, result.lyrics.lines]);
 
   const activeLyricIndex = getActiveLyricIndex(lyricTimings, currentTime);
 
@@ -120,44 +117,7 @@ export function TrollMusicStudio({
                 </audio>
 
                 <div className="rounded-md border border-caution/70 bg-black p-4">
-                  <div className="mb-4 flex items-center justify-between gap-4">
-                    <p className="text-sm font-black text-caution">실시간 가사</p>
-                    <p className="text-xs font-bold text-white/50">
-                      현재 {formatTime(currentTime)} / 시작 {lyricStartOffset.toFixed(1)}초
-                    </p>
-                  </div>
-
-                  <div className="mb-4 grid grid-cols-2 gap-3">
-                    <label className="block">
-                      <span className="mb-2 block text-xs font-black text-white/60">
-                        가사 시작 시간
-                      </span>
-                      <input
-                        className="w-full accent-yellow-300"
-                        max="18"
-                        min="0"
-                        step="0.5"
-                        type="range"
-                        value={lyricStartOffset}
-                        onChange={(event) => setLyricStartOffset(Number(event.target.value))}
-                      />
-                    </label>
-                    <label className="block">
-                      <span className="mb-2 block text-xs font-black text-white/60">
-                        가사 진행 속도
-                      </span>
-                      <input
-                        className="w-full accent-yellow-300"
-                        max="100"
-                        min="45"
-                        step="1"
-                        type="range"
-                        value={lyricCoverage}
-                        onChange={(event) => setLyricCoverage(Number(event.target.value))}
-                      />
-                    </label>
-                  </div>
-
+                  <p className="mb-4 text-sm font-black text-caution">실시간 가사</p>
                   <div className="space-y-2">
                     {lyricTimings.map((timing, index) => (
                       <p
@@ -166,7 +126,7 @@ export function TrollMusicStudio({
                           index === activeLyricIndex ? "bg-caution text-black" : "text-white/45"
                         }`}
                       >
-                        {formatTime(timing.start)} · {timing.line}
+                        {timing.line}
                       </p>
                     ))}
                   </div>
@@ -230,13 +190,4 @@ function getActiveLyricIndex(timings: LyricTiming[], currentTime: number) {
   }
 
   return timings.length - 1;
-}
-
-function formatTime(seconds: number) {
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = Math.floor(seconds % 60)
-    .toString()
-    .padStart(2, "0");
-
-  return `${minutes}:${remainingSeconds}`;
 }

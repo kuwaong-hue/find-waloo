@@ -85,36 +85,23 @@ export function TrollView({ result }: TrollViewProps) {
             icon={Star}
             title="하이라이트 추출"
             main={`"${result.offContextQuotes[0] ?? result.trollHighlights[0] ?? "오늘의 명대사 수집 중"}"`}
-            caption="회의 뒤에 남은 진짜 이야기"
+            caption="가장 눈에 띄는 대사와 회의 흐름을 음악 재료로 정리했습니다."
           />
-          <div className="black-card p-5">
-            <div className="mb-4 flex items-center gap-2">
-              <Crown className="h-8 w-8 text-caution" />
-              <h3 className="text-2xl font-black">월루 후보</h3>
-            </div>
-            <div className="flex min-h-48 flex-col items-center justify-center rounded-md border border-caution/60 bg-black/45 text-center">
-              <p className="text-7xl font-black text-caution">{topCandidate?.score ?? 0}</p>
-              <p className="text-xl font-black">/100</p>
-              <p className="mt-3 text-lg font-black">{topCandidate?.name ?? "후보 없음"}</p>
-            </div>
-          </div>
-          <div className="black-card p-5">
-            <div className="mb-4 flex items-center gap-2">
-              <TriangleAlert className="h-8 w-8 text-caution" />
-              <h3 className="text-2xl font-black">맥락 이탈 발견</h3>
-            </div>
-            <div className="rounded-md border border-white/20 bg-black/45 p-5 text-center">
-              <p className="text-6xl font-black text-caution">{derailmentCount}회</p>
-              <p className="mt-3 text-sm font-bold text-white/70">
-                주제 이탈, 흐름 끊김, 회의 좌초 멘트 감지
-              </p>
-            </div>
-            <ul className="mt-4 space-y-2 text-xs font-bold text-white/70">
-              {result.derailmentLines.slice(0, 3).map((line) => (
-                <li key={line}>- {line}</li>
-              ))}
-            </ul>
-          </div>
+          <DarkDetailCard
+            icon={Crown}
+            title="오늘의 월루 후보"
+            main={`${topCandidate?.name ?? "후보 없음"}\n${topCandidate?.score ?? 0}/100`}
+            caption={topCandidate?.reason ?? "후보 판단 근거가 아직 없습니다."}
+          />
+          <DarkDetailCard
+            icon={TriangleAlert}
+            title="맥락 이탈 발견"
+            main={`${derailmentCount}회`}
+            caption={
+              result.derailmentLines.slice(0, 2).join(" / ") ||
+              "주제 이탈, 흐름 끊김, 회의 좌초 멘트를 감지합니다."
+            }
+          />
           <DarkDetailCard
             icon={Music2}
             title="음악 생성 재료"
@@ -179,15 +166,15 @@ function DarkDetailCard({
   caption: string;
 }) {
   return (
-    <div className="black-card p-5">
-      <div className="mb-4 flex items-center gap-2">
-        <Icon className="h-8 w-8 text-caution" />
+    <div className="black-card flex min-h-[340px] flex-col p-5">
+      <div className="mb-4 flex min-h-16 items-center gap-2">
+        <Icon className="h-8 w-8 flex-none text-caution" />
         <h3 className="text-2xl font-black">{title}</h3>
       </div>
-      <div className="min-h-36 rounded-md border-2 border-caution bg-black/45 p-5 text-xl font-black leading-relaxed text-caution">
+      <div className="flex min-h-40 flex-1 items-center justify-center whitespace-pre-line rounded-md border-2 border-caution bg-black/45 p-5 text-center text-2xl font-black leading-relaxed text-caution">
         {main}
       </div>
-      <p className="mt-4 text-sm font-bold leading-relaxed text-white/70">{caption}</p>
+      <p className="mt-4 min-h-16 text-sm font-bold leading-relaxed text-white/70">{caption}</p>
     </div>
   );
 }
