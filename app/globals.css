@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 1180px;
+  background: #050505;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: #f8f8f8;
+  background:
+    radial-gradient(circle at 16% 8%, rgba(255, 229, 0, 0.28), transparent 20%),
+    radial-gradient(circle at 80% 20%, rgba(255, 229, 0, 0.12), transparent 18%),
+    linear-gradient(145deg, #050505 0%, #111 48%, #050505 100%);
+  font-family: Pretendard, Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+::selection {
+  color: #050505;
+  background: #ffe500;
+}
+
+.graffiti-title {
+  color: #ffe500;
+  font-family: "Arial Black", Impact, system-ui, sans-serif;
+  letter-spacing: 0;
+  text-shadow:
+    3px 3px 0 #000,
+    -2px -2px 0 #000,
+    2px -2px 0 #000,
+    -2px 2px 0 #000,
+    0 0 0 5px #fff,
+    8px 8px 0 rgba(0, 0, 0, 0.8);
+  -webkit-text-stroke: 2px #101010;
+}
+
+.white-pop {
+  text-shadow:
+    2px 2px 0 #000,
+    -2px -2px 0 #000,
+    2px -2px 0 #000,
+    -2px 2px 0 #000,
+    5px 5px 0 rgba(255, 229, 0, 0.25);
+}
+
+.paper-card {
+  position: relative;
+  border: 3px solid #fff;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.05), transparent 12%, rgba(0, 0, 0, 0.08) 68%, transparent),
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.04) 0 1px, transparent 1px 7px),
+    #f4f1e7;
+  color: #111;
+  clip-path: polygon(0 2%, 97% 0, 100% 94%, 91% 100%, 4% 97%);
+  box-shadow: 8px 8px 0 #000;
+}
+
+.black-card {
+  border: 2px solid rgba(255, 255, 255, 0.86);
+  background:
+    radial-gradient(circle at 20% 10%, rgba(255, 229, 0, 0.14), transparent 22%),
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 8px),
+    #101010;
+  box-shadow: 7px 7px 0 #000;
+}
+
+.sticker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: fit-content;
+  border: 2px solid #101010;
+  background: #ffe500;
+  color: #080808;
+  box-shadow: 4px 4px 0 #000;
+  transform: rotate(-1deg);
+  font-weight: 900;
+}
+
+.torn-edge {
+  clip-path: polygon(1% 0, 98% 2%, 100% 15%, 98% 35%, 100% 58%, 97% 100%, 2% 98%, 0 82%, 2% 57%, 0 31%);
+}
+
+.halftone {
+  background-image:
+    radial-gradient(circle, rgba(255, 229, 0, 0.18) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-position: 0 0, 8px 8px;
+  background-size: 18px 18px;
+}
+
+.scribble-line {
+  height: 6px;
+  background: repeating-linear-gradient(
+    90deg,
+    #ffe500 0 28px,
+    transparent 28px 34px,
+    #fff 34px 48px,
+    transparent 48px 56px
+  );
+}
