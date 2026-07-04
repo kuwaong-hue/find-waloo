@@ -336,22 +336,33 @@ export default function Home() {
                 initial={{ opacity: 0, rotateY: -8, y: 16 }}
                 transition={{ duration: 0.38 }}
               >
-                <section className="mb-6 overflow-hidden rounded-[10px] border-[3px] border-white bg-black shadow-white">
-                  <Image
-                    alt="월루를 찾아라 모드 레이아웃"
-                    className="h-auto w-full"
-                    height={1024}
-                    priority
-                    src="/media/wollu-found.png"
-                    width={1024}
-                  />
+                <section className="mb-6 grid grid-cols-[minmax(0,1fr)_280px] items-center gap-5 rounded-[10px] border-[3px] border-white bg-black p-5 shadow-white">
+                  <div>
+                    <div className="sticker px-5 py-2 text-lg">WALOO BOARD</div>
+                    <h1 className="graffiti-title mt-4 text-6xl leading-none">
+                      월루를 찾아라
+                    </h1>
+                    <p className="mt-3 text-2xl font-black white-pop">
+                      회의록 뒤에 숨은 하이라이트와 월루송 재료를 정리했습니다
+                    </p>
+                  </div>
+                  <div className="overflow-hidden rounded-md border-2 border-white bg-black">
+                    <Image
+                      alt="찾았다 요놈 월루 색출 완료"
+                      className="h-auto w-full"
+                      height={1024}
+                      priority
+                      src="/media/wollu-found.png"
+                      width={1024}
+                    />
+                  </div>
                 </section>
 
-                <section className="paper-card mb-6 grid grid-cols-[minmax(0,1fr)_220px] items-center gap-4 p-4">
-                  <div className="h-[330px] overflow-hidden rounded-md border-2 border-neutral-300 bg-white">
+                <section className="mb-6 grid grid-cols-[minmax(0,1fr)_190px] items-stretch gap-4 rounded-[10px] border-[3px] border-white bg-[#f4f1e7] p-4 text-black shadow-white">
+                  <div className="flex min-h-[360px] items-center justify-center overflow-hidden rounded-md border-2 border-neutral-300 bg-white">
                     <Image
                       alt="월루 분석 결과 레이아웃"
-                      className="h-full w-full object-cover object-center"
+                      className="h-full max-h-[390px] w-auto scale-[1.08] object-contain"
                       height={1024}
                       src="/media/wollu-result.png"
                       width={1024}
@@ -359,13 +370,13 @@ export default function Home() {
                   </div>
 
                   <button
-                    className="flex h-[330px] items-center justify-center overflow-hidden rounded-lg border-[4px] border-black bg-neutral-900 p-3 shadow-sticker transition hover:-translate-y-1"
+                    className="flex min-h-[360px] items-center justify-center overflow-hidden rounded-lg border-[4px] border-black bg-neutral-900 p-3 shadow-sticker transition hover:-translate-y-1"
                     type="button"
                     onClick={() => setScreenMode("minutes")}
                   >
                     <Image
                       alt="회의록 모드로 전환하기"
-                      className="h-full w-full object-contain"
+                      className="h-auto w-full object-contain"
                       height={1024}
                       src="/media/button-off.png"
                       width={1024}
