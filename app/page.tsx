@@ -1,12 +1,15 @@
 "use client";
 
-import Image from "next/image";
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
+  ArrowLeft,
   BriefcaseBusiness,
+  Crown,
   FileText,
+  Mic,
   Music2,
+  ShieldAlert,
   Sparkles,
   TriangleAlert,
 } from "lucide-react";
@@ -336,51 +339,60 @@ export default function Home() {
                 initial={{ opacity: 0, rotateY: -8, y: 16 }}
                 transition={{ duration: 0.38 }}
               >
-                <section className="mb-6 grid grid-cols-[minmax(0,1fr)_280px] items-center gap-5 rounded-[10px] border-[3px] border-white bg-black p-5 shadow-white">
-                  <div>
-                    <div className="sticker px-5 py-2 text-lg">WALOO BOARD</div>
-                    <h1 className="graffiti-title mt-4 text-6xl leading-none">
-                      월루를 찾아라
-                    </h1>
-                    <p className="mt-3 text-2xl font-black white-pop">
-                      회의록 뒤에 숨은 하이라이트와 월루송 재료를 정리했습니다
-                    </p>
-                  </div>
-                  <div className="overflow-hidden rounded-md border-2 border-white bg-black">
-                    <Image
-                      alt="찾았다 요놈 월루 색출 완료"
-                      className="h-auto w-full"
-                      height={1024}
-                      priority
-                      src="/media/wollu-found.png"
-                      width={1024}
-                    />
+                <section className="relative mb-6 overflow-hidden rounded-[10px] border-[3px] border-white bg-ink p-8 shadow-white">
+                  <div className="absolute -left-16 -top-20 h-56 w-72 rotate-[-18deg] bg-caution" />
+                  <div className="absolute inset-0 bg-grit-noise opacity-80" />
+                  <div className="relative z-10 grid grid-cols-[1fr_0.48fr] items-center gap-8">
+                    <div>
+                      <div className="sticker px-5 py-2 text-lg">WALOO BOARD</div>
+                      <h1 className="graffiti-title mt-5 text-7xl leading-none">
+                        월루를
+                        <br />
+                        찾아라
+                      </h1>
+                      <p className="mt-4 text-2xl font-black white-pop">
+                        회의록 뒤에 숨은 하이라이트와 월루송 재료를 정리했습니다
+                      </p>
+                    </div>
+
+                    <div className="paper-card torn-edge flex min-h-44 items-center justify-center p-6">
+                      <div className="text-center">
+                        <Crown className="mx-auto mb-3 h-12 w-12" />
+                        <ShieldAlert className="mx-auto mb-2 h-16 w-16" />
+                        <p className="text-xl font-black">오늘의 월루 후보 정리 완료</p>
+                      </div>
+                    </div>
                   </div>
                 </section>
 
-                <section className="mb-6 grid grid-cols-[minmax(0,1fr)_190px] items-stretch gap-4 rounded-[10px] border-[3px] border-white bg-[#f4f1e7] p-4 text-black shadow-white">
-                  <div className="flex min-h-[360px] items-center justify-center overflow-hidden rounded-md border-2 border-neutral-300 bg-white">
-                    <Image
-                      alt="월루 분석 결과 레이아웃"
-                      className="h-full max-h-[390px] w-auto scale-[1.08] object-contain"
-                      height={1024}
-                      src="/media/wollu-result.png"
-                      width={1024}
-                    />
+                <section className="paper-card mb-6 grid grid-cols-[1fr_0.34fr] gap-5 p-5">
+                  <div>
+                    <div className="mb-4 flex items-center gap-3">
+                      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-black text-white">
+                        <Mic className="h-8 w-8" />
+                      </div>
+                      <div>
+                        <h2 className="text-3xl font-black">회의 분석 결과</h2>
+                        <p className="font-bold text-neutral-500">
+                          {result.meetingTitle} · {result.duration}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="rounded-md border-2 border-dashed border-neutral-400 bg-white p-8 text-center text-2xl font-black leading-relaxed">
+                      회의록 분석 완료 · 숨겨진 후보와 음악 재료를 추출했습니다
+                    </div>
                   </div>
 
                   <button
-                    className="flex min-h-[360px] items-center justify-center overflow-hidden rounded-lg border-[4px] border-black bg-neutral-900 p-3 shadow-sticker transition hover:-translate-y-1"
+                    className="flex min-h-44 flex-col items-center justify-center rounded-lg border-[5px] border-black bg-neutral-900 p-5 text-center text-white shadow-sticker transition hover:-translate-y-1"
                     type="button"
                     onClick={() => setScreenMode("minutes")}
                   >
-                    <Image
-                      alt="회의록 모드로 전환하기"
-                      className="h-auto w-full object-contain"
-                      height={1024}
-                      src="/media/button-off.png"
-                      width={1024}
-                    />
+                    <span className="mb-3 flex h-20 w-20 items-center justify-center rounded-full border-4 border-black bg-caution text-black shadow-sticker">
+                      <ArrowLeft className="h-10 w-10" />
+                    </span>
+                    <span className="text-3xl font-black white-pop">회의록 모드로</span>
+                    <span className="text-4xl font-black text-caution">전환하기</span>
                   </button>
                 </section>
 
