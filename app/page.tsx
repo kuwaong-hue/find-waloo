@@ -1,16 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
+import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowLeft,
   BriefcaseBusiness,
-  Crown,
   FileText,
-  Mic,
   Music2,
-  Play,
-  ShieldAlert,
   Sparkles,
   TriangleAlert,
 } from "lucide-react";
@@ -44,7 +41,9 @@ export default function Home() {
   const [memberNames, setMemberNames] = useState("");
   const [meetingNotes, setMeetingNotes] = useState("");
   const [selectedStyle, setSelectedStyle] = useState<MusicStyle>("hiphop");
-  const [selectedActivities, setSelectedActivities] = useState<WolluActivity[]>(["commute"]);
+  const [selectedActivities, setSelectedActivities] = useState<WolluActivity[]>([
+    "summaryHighlight",
+  ]);
   const [result, setResult] = useState<MockResult | null>(null);
   const [musicUrl, setMusicUrl] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -54,26 +53,6 @@ export default function Home() {
   const canAnalyze = useMemo(() => phase !== "loading", [phase]);
   const fileName = audioFile?.name ?? "";
   const isWolluMode = screenMode === "wollu";
-
-  useEffect(() => {
-    const handleShortcut = (event: KeyboardEvent) => {
-      if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "t" && result) {
-        event.preventDefault();
-        setScreenMode((current) => (current === "minutes" ? "wollu" : "minutes"));
-      }
-    };
-
-    window.addEventListener("keydown", handleShortcut);
-    return () => window.removeEventListener("keydown", handleShortcut);
-  }, [result]);
-
-  useEffect(() => {
-    return () => {
-      if (musicUrl) {
-        URL.revokeObjectURL(musicUrl);
-      }
-    };
-  }, [musicUrl]);
 
   const handleFileChange = async (file: File | null) => {
     setAudioFile(null);
@@ -85,7 +64,7 @@ export default function Home() {
     }
 
     if (file.size > MAX_AUDIO_FILE_BYTES) {
-      setErrorMessage("Vercel 배포 환경에서는 오디오 파일을 4MB 이하로 업로드해 주세요.");
+      setErrorMessage("배포 환경에서는 4MB 이하의 짧은 오디오 파일만 업로드할 수 있습니다.");
       return;
     }
 
@@ -111,8 +90,8 @@ export default function Home() {
       return;
     }
 
-    if (!audioFile) {
-      setErrorMessage("먼저 10분 이하의 회의 음성 파일을 업로드해 주세요.");
+    if (!audioFile && meetingNotes.trim().length === 0) {
+      setErrorMessage("회의 음성 파일을 올리거나, 회의 내용을 직접 입력해 주세요.");
       return;
     }
 
@@ -125,7 +104,9 @@ export default function Home() {
 
     try {
       const formData = new FormData();
-      formData.append("file", audioFile);
+      if (audioFile) {
+        formData.append("file", audioFile);
+      }
       formData.append("style", selectedStyle);
       formData.append("participantCount", participantCount);
       formData.append("memberNames", memberNames);
@@ -145,7 +126,7 @@ export default function Home() {
       setResult(payload.result);
       setPhase("done");
     } catch (error) {
-      const message = error instanceof Error ? error.message : "알 수 없는 오류가 발생했습니다.";
+      const message = error instanceof Error ? error.message : "알 수 없는 분석 오류가 발생했습니다.";
       setErrorMessage(message);
       setPhase("idle");
     }
@@ -270,23 +251,25 @@ export default function Home() {
                         <div>
                           <p className="text-sm font-black text-blue-600">READY</p>
                           <h2 className="mt-4 text-5xl font-black leading-tight text-slate-950">
-                            회의 내용을 정리하고,
+                            자료를 넣고
                             <br />
-                            핵심만 빠르게 확인하세요
+                            회의록부터 확인하세요
                           </h2>
                           <p className="mt-5 max-w-2xl text-xl font-bold leading-relaxed text-slate-600">
-                            음성 파일과 선택 참고 정보를 바탕으로 요약, 결정사항, 회의 주제,
-                            다음 액션을 한 화면에 정리합니다.
+                            음성 파일이 없으면 회의 내용을 텍스트로 넣어도 됩니다. 기본 화면은 업무용
+                            회의록에 집중하고, 월루송 생성은 결과 화면에서 별도로 전환합니다.
                           </p>
                         </div>
 
                         <div className="grid grid-cols-3 gap-4">
-                          {["회의 음성 업로드", "사용자 지정", "회의록 생성"].map((item, index) => (
-                            <div key={item} className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-                              <p className="text-4xl font-black text-blue-600">0{index + 1}</p>
-                              <p className="mt-2 text-xl font-black text-slate-900">{item}</p>
-                            </div>
-                          ))}
+                          {["음성 또는 텍스트 입력", "회의록 요약", "월루송 모드 전환"].map(
+                            (item, index) => (
+                              <div key={item} className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                                <p className="text-4xl font-black text-blue-600">0{index + 1}</p>
+                                <p className="mt-2 text-xl font-black text-slate-900">{item}</p>
+                              </div>
+                            ),
+                          )}
                         </div>
                       </motion.section>
                     )}
@@ -316,7 +299,7 @@ export default function Home() {
                           <div>
                             <p className="text-sm font-black text-blue-600">회의록 생성 완료</p>
                             <p className="mt-1 font-bold text-slate-700">
-                              Ctrl + Shift + T 로도 월루 모드 전환 가능
+                              회의록을 확인한 뒤 월루송 생성기로 이동할 수 있습니다.
                             </p>
                           </div>
                           <div className="flex gap-3">
@@ -333,7 +316,7 @@ export default function Home() {
                               onClick={() => setScreenMode("wollu")}
                             >
                               <Music2 className="h-5 w-5" />
-                              메모장의 핵심 요약 확인하기
+                              월루송 생성기로 전환
                             </button>
                           </div>
                         </div>
@@ -354,10 +337,9 @@ export default function Home() {
                 initial={{ opacity: 0, rotateY: -8, y: 16 }}
                 transition={{ duration: 0.38 }}
               >
-                <section className="relative mb-6 overflow-hidden rounded-[10px] border-[3px] border-white bg-ink p-8 shadow-white">
-                  <div className="absolute -left-16 -top-20 h-56 w-72 rotate-[-18deg] bg-caution" />
+                <section className="relative mb-6 overflow-hidden rounded-[10px] border-[3px] border-white bg-ink p-6 shadow-white">
                   <div className="absolute inset-0 bg-grit-noise opacity-80" />
-                  <div className="relative z-10 grid grid-cols-[1fr_0.58fr] gap-8">
+                  <div className="relative z-10 grid grid-cols-[0.9fr_1.1fr] items-center gap-7">
                     <div>
                       <div className="sticker px-5 py-2 text-lg">MVP DEMO</div>
                       <h1 className="graffiti-title mt-5 text-7xl leading-none">
@@ -369,48 +351,50 @@ export default function Home() {
                         회의록의 척하는 트롤 색출 음악 생성기
                       </p>
                       <div className="sticker mt-5 px-5 py-2 text-lg">
-                        겉으로는 AI 회의록 · 속으로는 트롤 색출 & 음악 생성
+                        겉으로는 회의록, 속으로는 하이라이트와 월루송
                       </div>
                     </div>
 
-                    <div className="paper-card torn-edge flex min-h-48 items-center justify-center p-6">
-                      <div className="text-center">
-                        <Crown className="mx-auto mb-4 h-14 w-14" />
-                        <ShieldAlert className="mx-auto mb-2 h-20 w-20" />
-                        <p className="text-xl font-black">오늘의 월루 감지 완료</p>
-                      </div>
+                    <div className="overflow-hidden rounded-md border-2 border-white bg-black">
+                      <Image
+                        alt="월루 색출 완료 레이아웃"
+                        className="h-auto w-full"
+                        height={1024}
+                        priority
+                        src="/media/wollu-found.png"
+                        width={1024}
+                      />
                     </div>
                   </div>
                 </section>
 
-                <section className="paper-card mb-6 grid grid-cols-[1fr_0.42fr] gap-5 p-5">
-                  <div>
-                    <div className="mb-4 flex items-center gap-3">
-                      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-black text-white">
-                        <Mic className="h-8 w-8" />
-                      </div>
-                      <div>
-                        <h2 className="text-3xl font-black">회의 음성 분석 결과</h2>
-                        <p className="font-bold text-neutral-500">
-                          10분 이내 음성 파일 기반 · {result.meetingTitle}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="rounded-md border-2 border-dashed border-neutral-400 bg-white p-8 text-center font-black">
-                      파일 분석 완료 · 숨겨진 후보와 음악 재료를 추출했습니다
-                    </div>
+                <section className="paper-card mb-6 grid grid-cols-[1fr_0.34fr] gap-5 p-5">
+                  <div className="overflow-hidden rounded-md border-2 border-neutral-300 bg-white">
+                    <Image
+                      alt="월루 분석 결과 패널"
+                      className="h-auto w-full"
+                      height={1024}
+                      src="/media/wollu-result.png"
+                      width={1024}
+                    />
                   </div>
 
                   <button
-                    className="flex min-h-44 flex-col items-center justify-center rounded-lg border-[5px] border-black bg-neutral-900 p-5 text-center text-white shadow-sticker"
+                    className="group overflow-hidden rounded-lg border-[4px] border-black bg-neutral-900 text-left shadow-sticker transition hover:-translate-y-1"
                     type="button"
                     onClick={() => setScreenMode("minutes")}
                   >
-                    <span className="mb-3 flex h-20 w-20 items-center justify-center rounded-full border-4 border-black bg-caution text-black shadow-sticker">
-                      <ArrowLeft className="h-10 w-10" />
+                    <Image
+                      alt="회의록 모드로 전환하기"
+                      className="h-auto w-full"
+                      height={1024}
+                      src="/media/button-off.png"
+                      width={1024}
+                    />
+                    <span className="flex items-center justify-center gap-2 bg-caution px-3 py-3 text-xl font-black text-black">
+                      <ArrowLeft className="h-6 w-6" />
+                      회의록으로 돌아가기
                     </span>
-                    <span className="text-3xl font-black white-pop">회의록 모드로</span>
-                    <span className="text-4xl font-black text-caution">전환하기</span>
                   </button>
                 </section>
 
@@ -431,11 +415,6 @@ export default function Home() {
                       onStyleChange={setSelectedStyle}
                     />
                   )}
-                  {!isGeneratingMusic && musicError ? (
-                    <div className="border-2 border-caution bg-black p-4 font-bold text-caution">
-                      {musicError}
-                    </div>
-                  ) : null}
                 </div>
               </motion.div>
             )
@@ -451,9 +430,7 @@ function MinutesHeader() {
     <header className="mb-8 flex items-center justify-between border-b border-slate-200 bg-white/70 px-1 pb-5 backdrop-blur">
       <div className="flex items-center gap-3">
         <div className="text-5xl font-black text-blue-600">W</div>
-        <div>
-          <p className="text-3xl font-black text-slate-950">Find Waloo</p>
-        </div>
+        <p className="text-3xl font-black text-slate-950">Find Waloo</p>
       </div>
       <nav className="flex gap-4">
         <HeaderButton icon={Sparkles} label="AI 요약" active />

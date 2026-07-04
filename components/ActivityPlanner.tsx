@@ -1,39 +1,39 @@
 "use client";
 
-import { Home, Martini, TrainFront, Video } from "lucide-react";
+import { MessageSquareQuote, NotebookText, Scale, Utensils } from "lucide-react";
 import type { WolluActivity } from "@/lib/types";
 
-type ActivityOption = {
+type DialogueOption = {
   id: WolluActivity;
   title: string;
   description: string;
   icon: React.ComponentType<{ className?: string }>;
 };
 
-const activityOptions: ActivityOption[] = [
+const dialogueOptions: DialogueOption[] = [
   {
-    id: "commute",
-    title: "퇴근길 플레이리스트",
-    description: "지하철/버스에서 듣는 30초 월루송",
-    icon: TrainFront,
+    id: "quoteRaw",
+    title: "하이라이트 대사 주변 대사를 그대로 발췌",
+    description: "웃긴 발언 전후의 맥락을 살려 가사에 직접 반영합니다.",
+    icon: MessageSquareQuote,
   },
   {
-    id: "afterwork",
-    title: "회식 전 예열곡",
-    description: "팀원들에게 공유하기 좋은 흥얼흥얼 버전",
-    icon: Martini,
+    id: "summaryHighlight",
+    title: "회의 내용 요약 + 하이라이트 부분만 반영",
+    description: "회의 핵심과 웃긴 장면만 정리해 가장 안정적인 버전으로 만듭니다.",
+    icon: NotebookText,
   },
   {
-    id: "home",
-    title: "집에서 복기",
-    description: "회의를 떠올리며 혼자 웃는 홈 리스닝",
-    icon: Home,
+    id: "logicalRoast",
+    title: "월루를 논리적으로 저격하는 버전",
+    description: "회의 맥락과 발언 근거를 바탕으로 후보를 재치 있게 짚습니다.",
+    icon: Scale,
   },
   {
-    id: "shorts",
-    title: "밈 쇼츠 배경음",
-    description: "짧고 강한 후렴을 우선하는 숏폼 버전",
-    icon: Video,
+    id: "dinnerRecommend",
+    title: "회사 앞날은 모르겠고 회의 기반 오늘 저메추",
+    description: "회의 분위기를 음식 추천 밈으로 바꿔 가볍게 풀어냅니다.",
+    icon: Utensils,
   },
 ];
 
@@ -49,7 +49,7 @@ export function ActivityPlanner({
   const toggleActivity = (activity: WolluActivity) => {
     if (selectedActivities.includes(activity)) {
       const next = selectedActivities.filter((item) => item !== activity);
-      onActivitiesChange(next.length > 0 ? next : ["commute"]);
+      onActivitiesChange(next.length > 0 ? next : ["summaryHighlight"]);
       return;
     }
 
@@ -59,12 +59,12 @@ export function ActivityPlanner({
   return (
     <section className="black-card p-6">
       <div className="mb-5">
-        <div className="sticker px-3 py-1 text-sm">ACTIVITY</div>
-        <h2 className="mt-3 text-3xl font-black">관련 활동 지정</h2>
+        <div className="sticker px-3 py-1 text-sm">DIALOGUE MODE</div>
+        <h2 className="mt-3 text-3xl font-black">대사 반영 방식</h2>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        {activityOptions.map((option) => {
+        {dialogueOptions.map((option) => {
           const Icon = option.icon;
           const isSelected = selectedActivities.includes(option.id);
 
@@ -80,7 +80,7 @@ export function ActivityPlanner({
               onClick={() => toggleActivity(option.id)}
             >
               <Icon className="mb-3 h-8 w-8" />
-              <p className="text-xl font-black">{option.title}</p>
+              <p className="text-lg font-black leading-tight">{option.title}</p>
               <p className={`mt-2 text-sm font-bold ${isSelected ? "text-black/70" : "text-white/60"}`}>
                 {option.description}
               </p>

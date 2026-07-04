@@ -10,17 +10,15 @@ const loadingCopy = {
   minutes: {
     src: "/media/meeting-loading.mp4",
     title: "회의록을 정리하는 중...",
-    description: "음성을 전사하고 핵심 안건, 결정사항, 액션 아이템을 추출하고 있습니다.",
+    description: "입력 내용을 분석하고 핵심 안건, 결정사항, 다음 액션을 추출하고 있습니다.",
     frameClass: "border-slate-200 bg-white text-slate-950 shadow-xl shadow-slate-200/70",
-    videoClass: "bg-white",
     spinnerClass: "text-blue-600",
   },
   wollu: {
     src: "/media/wollu-loading.mp4",
     title: "이 회의의 월급 루팡 색출중...",
-    description: "회의록 속 하이라이트와 후보 데이터를 바탕으로 월루송 재료를 조합하고 있습니다.",
+    description: "하이라이트와 후보 데이터를 바탕으로 월루송 재료를 조합하고 있습니다.",
     frameClass: "border-white bg-black text-white shadow-white",
-    videoClass: "bg-white",
     spinnerClass: "text-caution",
   },
 };
@@ -31,7 +29,7 @@ export function LoadingVideoCard({ mode }: LoadingVideoCardProps) {
   return (
     <section className={`rounded-lg border-2 p-6 ${copy.frameClass}`}>
       <div className="grid grid-cols-[0.72fr_0.28fr] items-center gap-6">
-        <div className={`overflow-hidden rounded-lg border ${copy.videoClass}`}>
+        <div className="overflow-hidden rounded-lg border bg-white">
           <video
             autoPlay
             className="aspect-square h-full max-h-[560px] w-full object-contain"

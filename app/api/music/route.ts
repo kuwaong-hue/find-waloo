@@ -14,10 +14,14 @@ const stylePrompts: Record<MusicStyle, string> = {
 };
 
 const activityPrompts: Record<WolluActivity, string> = {
-  commute: "made for listening on the commute home after work",
-  afterwork: "made for a team after-work hangout before dinner",
-  home: "made for relaxing at home while laughing about the meeting",
-  shorts: "made for a short-form meme video with a memorable hook",
+  quoteRaw:
+    "Use the highlighted quote and nearby context as directly as possible while keeping it safe and playful.",
+  summaryHighlight:
+    "Use the meeting summary and only the strongest highlight moments for a clean, catchy song.",
+  logicalRoast:
+    "Make the lyrics feel like a witty evidence-based roast of the office slacker candidate, without harassment.",
+  dinnerRecommend:
+    "Turn the meeting mood into a funny Korean dinner recommendation song based on the meeting context.",
 };
 
 type MusicRequest = {
@@ -31,7 +35,7 @@ export async function POST(request: Request) {
     const elevenLabsKey = process.env.ELEVENLABS_API_KEY;
 
     if (!elevenLabsKey) {
-      return jsonError("ELEVENLABS_API_KEY가 .env.local에 없습니다.", 500);
+      return jsonError("ELEVENLABS_API_KEY가 설정되어 있지 않습니다.", 500);
     }
 
     const body = (await request.json()) as MusicRequest;
@@ -77,16 +81,19 @@ export async function POST(request: Request) {
 
 function buildMusicPrompt(result: MockResult, style: MusicStyle, activities: WolluActivity[]) {
   const topCandidate = result.trollCandidates[0];
-  const activityText = activities.map((activity) => activityPrompts[activity]).join(", ");
+  const activityText = activities.map((activity) => activityPrompts[activity]).join("\n");
   const lyrics = result.lyrics.lines.join(" / ");
 
   return [
     stylePrompts[style],
-    activityText,
     "Language: Korean.",
     "Mood: funny, energetic, meme-like, not offensive.",
     "Create a complete short song with vocals and instrumental backing.",
+    "Dialogue reflection rules:",
+    activityText,
     `Meeting summary: ${result.summary}`,
+    `Funny highlights: ${result.trollHighlights.join(" / ")}`,
+    `Off-context quotes: ${result.offContextQuotes.join(" / ")}`,
     `Top office slacker candidate: ${topCandidate?.name ?? "unknown"} - ${
       topCandidate?.reason ?? "funny meeting drift"
     }`,
@@ -104,15 +111,18 @@ function normalizeStyle(value: unknown): MusicStyle {
 
 function normalizeActivities(value: unknown): WolluActivity[] {
   if (!Array.isArray(value)) {
-    return ["commute"];
+    return ["summaryHighlight"];
   }
 
   const activities = value.filter(
     (item): item is WolluActivity =>
-      item === "commute" || item === "afterwork" || item === "home" || item === "shorts",
+      item === "quoteRaw" ||
+      item === "summaryHighlight" ||
+      item === "logicalRoast" ||
+      item === "dinnerRecommend",
   );
 
-  return activities.length > 0 ? activities : ["commute"];
+  return activities.length > 0 ? activities : ["summaryHighlight"];
 }
 
 function jsonError(message: string, status: number) {
