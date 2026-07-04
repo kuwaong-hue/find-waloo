@@ -347,11 +347,11 @@ export default function Home() {
                   />
                 </section>
 
-                <section className="paper-card mb-6 grid grid-cols-[1fr_0.34fr] gap-5 p-5">
-                  <div className="overflow-hidden rounded-md border-2 border-neutral-300 bg-white">
+                <section className="paper-card mb-6 grid grid-cols-[minmax(0,1fr)_220px] items-center gap-4 p-4">
+                  <div className="h-[330px] overflow-hidden rounded-md border-2 border-neutral-300 bg-white">
                     <Image
                       alt="월루 분석 결과 레이아웃"
-                      className="h-auto w-full"
+                      className="h-full w-full object-cover object-center"
                       height={1024}
                       src="/media/wollu-result.png"
                       width={1024}
@@ -359,13 +359,13 @@ export default function Home() {
                   </div>
 
                   <button
-                    className="overflow-hidden rounded-lg border-[4px] border-black bg-neutral-900 shadow-sticker transition hover:-translate-y-1"
+                    className="flex h-[330px] items-center justify-center overflow-hidden rounded-lg border-[4px] border-black bg-neutral-900 p-3 shadow-sticker transition hover:-translate-y-1"
                     type="button"
                     onClick={() => setScreenMode("minutes")}
                   >
                     <Image
                       alt="회의록 모드로 전환하기"
-                      className="h-auto w-full"
+                      className="h-full w-full object-contain"
                       height={1024}
                       src="/media/button-off.png"
                       width={1024}
