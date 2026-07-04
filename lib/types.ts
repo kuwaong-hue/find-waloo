@@ -1,6 +1,6 @@
 export type MusicStyle = "hiphop" | "rock" | "trot" | "edm";
 
-export type WolluActivity = "commute" | "afterwork" | "home" | "shorts";
+export type WolluActivity = "quoteRaw" | "summaryHighlight" | "logicalRoast" | "dinnerRecommend";
 
 export type ActionItem = {
   owner: string;
