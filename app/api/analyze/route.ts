@@ -6,7 +6,7 @@ export const maxDuration = 60;
 
 const OPENAI_TRANSCRIPTIONS_URL = "https://api.openai.com/v1/audio/transcriptions";
 const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
-const MAX_AUDIO_FILE_BYTES = 25 * 1024 * 1024;
+const MAX_AUDIO_FILE_BYTES = 4 * 1024 * 1024;
 
 const styleLabels: Record<MusicStyle, string> = {
   hiphop: "옐로우 경고 힙합",
@@ -123,7 +123,7 @@ export async function POST(request: Request) {
     }
 
     if (audioFile.size > MAX_AUDIO_FILE_BYTES) {
-      return jsonError("오디오 파일은 25MB 이하만 업로드할 수 있습니다.", 400);
+      return jsonError("Vercel 배포 환경에서는 오디오 파일을 4MB 이하로 업로드해 주세요.", 400);
     }
 
     const transcript = await transcribeAudio(audioFile, openAiKey);

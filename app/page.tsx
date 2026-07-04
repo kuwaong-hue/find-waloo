@@ -33,7 +33,7 @@ type Phase = "idle" | "loading" | "done";
 type ScreenMode = "minutes" | "wollu";
 
 const MAX_AUDIO_DURATION_SECONDS = 10 * 60;
-const MAX_AUDIO_FILE_BYTES = 25 * 1024 * 1024;
+const MAX_AUDIO_FILE_BYTES = 4 * 1024 * 1024;
 
 export default function Home() {
   const [phase, setPhase] = useState<Phase>("idle");
@@ -85,7 +85,7 @@ export default function Home() {
     }
 
     if (file.size > MAX_AUDIO_FILE_BYTES) {
-      setErrorMessage("오디오 파일은 25MB 이하만 업로드할 수 있습니다.");
+      setErrorMessage("Vercel 배포 환경에서는 오디오 파일을 4MB 이하로 업로드해 주세요.");
       return;
     }
 
@@ -136,7 +136,7 @@ export default function Home() {
         body: formData,
       });
 
-      const payload = (await response.json()) as AnalyzeApiResponse & { error?: string };
+      const payload = await readApiResponse<AnalyzeApiResponse>(response);
 
       if (!response.ok) {
         throw new Error(payload.error || "분석 요청에 실패했습니다.");
@@ -172,7 +172,7 @@ export default function Home() {
         }),
       });
 
-      const payload = (await response.json()) as MusicApiResponse & { error?: string };
+      const payload = await readApiResponse<MusicApiResponse>(response);
 
       if (!response.ok) {
         throw new Error(payload.error || "음악 생성 요청에 실패했습니다.");
@@ -519,4 +519,23 @@ function base64ToBlob(base64: string, mimeType: string) {
   const byteCharacters = atob(base64);
   const byteNumbers = Array.from(byteCharacters, (character) => character.charCodeAt(0));
   return new Blob([new Uint8Array(byteNumbers)], { type: mimeType });
+}
+
+async function readApiResponse<T>(response: Response): Promise<T & { error?: string }> {
+  const contentType = response.headers.get("content-type") || "";
+  const rawText = await response.text();
+
+  if (contentType.includes("application/json")) {
+    return JSON.parse(rawText) as T & { error?: string };
+  }
+
+  if (rawText.includes("Request Entity Too Large")) {
+    return {
+      error: "업로드 파일이 서버 제한보다 큽니다. 4MB 이하의 짧은 mp3/wav 파일로 다시 시도해 주세요.",
+    } as T & { error?: string };
+  }
+
+  return {
+    error: rawText || `서버가 JSON이 아닌 응답을 반환했습니다. HTTP ${response.status}`,
+  } as T & { error?: string };
 }
