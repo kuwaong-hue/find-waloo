@@ -32,8 +32,8 @@ export function TrollMusicStudio({
 }: TrollMusicStudioProps) {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(30);
-  const [lyricStartOffset, setLyricStartOffset] = useState(8);
-  const [lyricCoverage, setLyricCoverage] = useState(86);
+  const [lyricStartOffset, setLyricStartOffset] = useState(6);
+  const [lyricCoverage, setLyricCoverage] = useState(78);
 
   const lyricTimings = useMemo(() => {
     const lines = result.lyrics.lines.length > 0 ? result.lyrics.lines : ["가사를 생성하는 중입니다"];
@@ -163,7 +163,9 @@ export function TrollMusicStudio({
                       <p
                         key={`${timing.line}-${index}`}
                         className={`rounded px-3 py-2 text-lg font-black transition ${
-                          index === activeLyricIndex ? "bg-caution text-black" : "text-white/45"
+                          index === activeLyricIndex
+                            ? "bg-caution text-black"
+                            : "text-white/45"
                         }`}
                       >
                         {formatTime(timing.start)} · {timing.line}
@@ -195,7 +197,7 @@ export function TrollMusicStudio({
               <div className="flex min-h-72 items-center justify-center border-2 border-dashed border-white/60 bg-black/45 text-center font-black text-white/65">
                 <div>
                   <Play className="mx-auto mb-3 h-12 w-12 text-caution" />
-                  월루송을 생성하면 플레이 바와 싱크 가사가 표시됩니다
+                  월루송 생성 후 플레이 바와 싱크 가사가 표시됩니다
                 </div>
               </div>
             )}
@@ -226,7 +228,7 @@ function getActiveLyricIndex(timings: LyricTiming[], currentTime: number) {
   }
 
   if (currentTime < timings[0].start) {
-    return -1;
+    return 0;
   }
 
   return timings.length - 1;

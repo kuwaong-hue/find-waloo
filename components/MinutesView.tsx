@@ -16,11 +16,16 @@ type MinutesViewProps = {
 export function MinutesView({ result }: MinutesViewProps) {
   return (
     <section className="space-y-5">
-      <NumberedCard icon={FileText} number="3" title="내용 요약" tone="blue">
+      <NumberedCard
+        icon={FileText}
+        number="3"
+        title="내용 요약"
+        tone="blue"
+      >
         <ul className="space-y-4 text-lg font-bold leading-relaxed text-slate-700">
-          <li>{result.summary}</li>
+          <li>• {result.summary}</li>
           {result.agendas.slice(0, 4).map((agenda) => (
-            <li key={agenda}>{agenda}</li>
+            <li key={agenda}>• {agenda}</li>
           ))}
         </ul>
       </NumberedCard>

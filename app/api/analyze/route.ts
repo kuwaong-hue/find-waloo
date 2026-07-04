@@ -9,8 +9,8 @@ const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
 const MAX_AUDIO_FILE_BYTES = 4 * 1024 * 1024;
 
 const styleLabels: Record<MusicStyle, string> = {
-  hiphop: "경쾌한 코미디 힙합",
-  rock: "퇴근길 팝록",
+  hiphop: "옐로우 경고 힙합",
+  rock: "퇴근 록",
   trot: "월루 트로트",
   edm: "회의실 EDM",
 };
@@ -108,43 +108,35 @@ export async function POST(request: Request) {
     const openAiKey = process.env.OPENAI_API_KEY;
 
     if (!openAiKey) {
-      return jsonError("OPENAI_API_KEY가 설정되어 있지 않습니다.", 500);
+      return jsonError("OPENAI_API_KEY가 .env.local에 없습니다.", 500);
     }
 
     const formData = await request.formData();
-    const maybeAudioFile = formData.get("file");
-    const audioFile = maybeAudioFile instanceof File ? maybeAudioFile : null;
+    const audioFile = formData.get("file");
     const style = normalizeStyle(formData.get("style"));
     const participantCount = stringValue(formData.get("participantCount"));
     const memberNames = stringValue(formData.get("memberNames"));
     const meetingNotes = stringValue(formData.get("meetingNotes"));
 
-    if (!audioFile && !meetingNotes) {
-      return jsonError("회의 음성 파일을 업로드하거나 회의 내용을 직접 입력해 주세요.", 400);
+    if (!(audioFile instanceof File)) {
+      return jsonError("회의 음성 파일을 먼저 업로드해 주세요.", 400);
     }
 
-    if (audioFile && audioFile.size > MAX_AUDIO_FILE_BYTES) {
-      return jsonError("배포 환경에서는 4MB 이하의 오디오 파일만 업로드할 수 있습니다.", 400);
+    if (audioFile.size > MAX_AUDIO_FILE_BYTES) {
+      return jsonError("Vercel 배포 환경에서는 오디오 파일을 4MB 이하로 업로드해 주세요.", 400);
     }
 
-    const transcript = audioFile
-      ? await transcribeAudio(audioFile, openAiKey)
-      : meetingNotes;
-
-    const mergedTranscript = meetingNotes
-      ? `${transcript}\n\n사용자가 추가로 입력한 회의 참고 내용:\n${meetingNotes}`
-      : transcript;
-
+    const transcript = await transcribeAudio(audioFile, openAiKey);
     const result = await analyzeTranscript(
-      mergedTranscript,
+      transcript,
       style,
       openAiKey,
       participantCount,
       memberNames,
-      Boolean(audioFile),
+      meetingNotes,
     );
 
-    return NextResponse.json({ result, transcript: mergedTranscript });
+    return NextResponse.json({ result, transcript });
   } catch (error) {
     const message = error instanceof Error ? error.message : "알 수 없는 분석 오류가 발생했습니다.";
     return jsonError(message, 500);
@@ -188,7 +180,7 @@ async function analyzeTranscript(
   apiKey: string,
   participantCount: string,
   memberNames: string,
-  hasAudio: boolean,
+  meetingNotes: string,
 ): Promise<MockResult> {
   const now = new Intl.DateTimeFormat("ko-KR", {
     dateStyle: "medium",
@@ -208,22 +200,23 @@ async function analyzeTranscript(
         {
           role: "system",
           content:
-            "너는 한국어 회의록 작성자이자 예능형 회의 하이라이트 분석가다. 결과는 반드시 JSON schema에 맞춰 한국어로만 작성한다. 실제 인물 모욕이나 혐오 표현 없이, 가벼운 밈 톤으로 회의 흐름을 분석한다.",
+            "너는 한국어 회의록 작성자이자 예능식 회의 하이라이트 분석가다. 결과는 반드시 JSON schema에 맞춰 한국어로만 작성한다. 실제 인물 모욕이나 혐오 표현 없이, 가벼운 밈 톤으로 회의 흐름을 분석한다.",
         },
         {
           role: "user",
           content: [
             `생성 시각: ${now}`,
-            `입력 방식: ${hasAudio ? "오디오 전사 기반" : "사용자 입력 텍스트 기반"}`,
-            `월루송에 사용할 음악 스타일: ${styleLabels[style]}`,
-            participantCount ? `참석 인원 수: ${participantCount}` : "참석 인원 수는 입력되지 않음",
-            memberNames ? `팀원 이름: ${memberNames}` : "팀원 이름은 입력되지 않음",
-            "아래 회의 내용을 바탕으로 정상 회의록과 숨겨진 월루 분석 데이터를 동시에 생성해줘.",
-            "참석자 이름이 불명확하면 '참석자 A'처럼 안전하게 추정해줘.",
+            `월루 모드에서 사용할 음악 스타일: ${styleLabels[style]}`,
+            participantCount ? `사용자가 입력한 참석 인원 수: ${participantCount}` : "사용자가 참석 인원 수를 입력하지 않음",
+            memberNames ? `사용자가 입력한 팀원 이름: ${memberNames}` : "사용자가 팀원 이름을 입력하지 않음",
+            meetingNotes ? `사용자가 입력한 회의 참고 내용: ${meetingNotes}` : "사용자가 회의 참고 내용을 입력하지 않음",
+            "아래 전사 텍스트를 바탕으로 정상 회의록과 숨겨진 월루 색출 보드 데이터를 동시에 생성해줘.",
+            "사용자가 입력한 인원 수, 이름, 참고 내용이 있으면 우선 반영해줘.",
+            "참석자 이름이 명확하지 않으면 '참석자 A'처럼 안전하게 추정해줘.",
             "trollCandidates score는 0~100 사이 숫자로 작성해줘.",
-            "lyrics.lines는 5~8줄의 짧은 한국어 노래 가사로 작성해줘.",
+            "lyrics.lines는 5~8줄의 짧은 노래 가사로 작성해줘.",
             "",
-            "회의 내용:",
+            "전사 텍스트:",
             transcript,
           ].join("\n"),
         },

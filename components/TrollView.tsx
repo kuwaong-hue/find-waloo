@@ -5,6 +5,7 @@ import {
   Crown,
   FileText,
   Music2,
+  Siren,
   Star,
   TriangleAlert,
   Users,
@@ -25,19 +26,19 @@ export function TrollView({ result }: TrollViewProps) {
       <div className="paper-card grid grid-cols-[1fr_1fr_1fr_0.55fr] gap-3 p-5">
         <SummaryCard
           icon={FileText}
-          title="오늘의 회의 요약"
+          title="오늘의 월급루팡 일지요약"
           lines={[
             result.summary,
             `하이라이트 ${result.trollHighlights.length}개 추출`,
-            "종합 평가: 회의는 끝났고, 밈은 남았습니다.",
+            `종합 평가: 오늘도 평화로운 월루 성공`,
           ]}
         />
         <div className="rounded-md border-2 border-neutral-300 bg-white p-5">
           <div className="mb-3 flex items-center gap-2">
             <Crown className="h-8 w-8 text-black" />
-            <h3 className="text-2xl font-black">오늘의 월루 후보</h3>
+            <h3 className="text-2xl font-black">트롤이 누구인가요?</h3>
           </div>
-          <p className="mb-3 text-sm font-black text-neutral-500">점수 기준 TOP 3</p>
+          <p className="mb-3 text-sm font-black text-neutral-500">트롤 후보 TOP 3</p>
           <div className="space-y-3">
             {result.trollCandidates.slice(0, 3).map((candidate, index) => (
               <div key={candidate.name} className="flex items-center justify-between gap-3">
@@ -85,12 +86,12 @@ export function TrollView({ result }: TrollViewProps) {
             icon={Star}
             title="하이라이트 추출"
             main={`"${result.offContextQuotes[0] ?? result.trollHighlights[0] ?? "오늘의 명대사 수집 중"}"`}
-            caption="회의 뒤에 남은 진짜 이야기"
+            caption="회의를 튀어나온 명대사 수집 중"
           />
           <div className="black-card p-5">
             <div className="mb-4 flex items-center gap-2">
               <Crown className="h-8 w-8 text-caution" />
-              <h3 className="text-2xl font-black">월루 후보</h3>
+              <h3 className="text-2xl font-black">오늘의 월루 후보</h3>
             </div>
             <div className="flex min-h-48 flex-col items-center justify-center rounded-md border border-caution/60 bg-black/45 text-center">
               <p className="text-7xl font-black text-caution">{topCandidate?.score ?? 0}</p>
@@ -106,7 +107,7 @@ export function TrollView({ result }: TrollViewProps) {
             <div className="rounded-md border border-white/20 bg-black/45 p-5 text-center">
               <p className="text-6xl font-black text-caution">{derailmentCount}회</p>
               <p className="mt-3 text-sm font-bold text-white/70">
-                주제 이탈, 흐름 끊김, 회의 좌초 멘트 감지
+                주제 이탈, 알림, 회의 좌초 멘트 감지
               </p>
             </div>
             <ul className="mt-4 space-y-2 text-xs font-bold text-white/70">
@@ -125,10 +126,10 @@ export function TrollView({ result }: TrollViewProps) {
       </div>
 
       <div className="paper-card p-5">
-        <div className="sticker mb-5 px-5 py-2 text-2xl">한눈에 보는 프로세스</div>
+        <div className="sticker mb-5 px-5 py-2 text-2xl">한 눈에 보는 프로세스</div>
         <div className="flex items-center justify-between gap-4 text-black">
           {[
-            { label: "입력 수집", icon: FileText },
+            { label: "음성 업로드", icon: FileText },
             { label: "회의록 요약", icon: CheckSquare },
             { label: "하이라이트 추출", icon: Star },
             { label: "오늘의 월루", icon: Crown },
@@ -213,7 +214,7 @@ function DarkDetailCard({
       <div className="min-h-36 rounded-md border-2 border-caution bg-black/45 p-5 text-xl font-black leading-relaxed text-caution">
         {main}
       </div>
-      <p className="mt-4 text-sm font-bold leading-relaxed text-white/70">{caption}</p>
+      <p className="mt-4 text-sm font-bold leading-relaxed text-white/72">{caption}</p>
     </div>
   );
 }

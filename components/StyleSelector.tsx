@@ -13,26 +13,26 @@ type StyleOption = {
 const styleOptions: StyleOption[] = [
   {
     id: "hiphop",
-    title: "경쾌한 힙합",
-    description: "회의 좌초 멘트를 챈트처럼 살리는 기본 추천",
+    title: "경고 힙합",
+    description: "회의 좌초 멘트를 가장 찰지게 살림",
     icon: Radio,
   },
   {
     id: "rock",
-    title: "퇴근길 록",
-    description: "강한 기타 리프로 회의 피로감을 날리는 스타일",
+    title: "퇴근 록",
+    description: "퇴근길에 어울리는 강한 기타 리프",
     icon: Volume2,
   },
   {
     id: "trot",
     title: "월루 트로트",
-    description: "팀장님도 따라 부를 수 있는 능청스러운 버전",
+    description: "팀장님도 흥얼거릴 후렴구",
     icon: Music,
   },
   {
     id: "edm",
     title: "회의실 EDM",
-    description: "짧은 밈 영상에 어울리는 강한 드롭",
+    description: "밈 쇼츠에 맞는 강한 드롭",
     icon: Sparkles,
   },
 ];
